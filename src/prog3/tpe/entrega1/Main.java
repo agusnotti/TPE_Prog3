@@ -27,20 +27,23 @@ public class Main {
 	public static void asLinkedListTest(String filePath, String generoBuscado) {
 		LinkedList<Libro> books = readFile(filePath);
 		Indice indice = new Indice();
+		Timer timer = new Timer();
+		System.out.println(" ");
 
+		timer.start();
 		for (Libro libro : books) {
 			indice.insertarLibro(libro);
 		}
+		double time = timer.stop();
+		System.out.println("LinkedList insertion time: " + time);
 
 		//indice.printPreOrder();
 
-		System.out.println(" ");
 
 		LinkedList<LibroInterface> booksitos = new LinkedList<LibroInterface>();
-		Timer timer = new Timer();
 		timer.start();
 		booksitos = indice.getLibrosPorGenero(generoBuscado);
-		double time = timer.stop();
+		time = timer.stop();
 		System.out.println("LinkedList iteration time: " + time);
 
 		Iterator<LibroInterface> iterator = booksitos.iterator();
@@ -76,6 +79,14 @@ public class Main {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		ArrayList<LibroWithArray> booksCopy = new ArrayList<>();
+		timer.start();
+		for (LibroWithArray book: books) {
+			booksCopy.add(book);
+		}
+		time = timer.stop();
+		System.out.println("ArrayList insertion time: " + time);
 
 	}
 
