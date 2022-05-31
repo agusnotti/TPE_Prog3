@@ -5,13 +5,16 @@ import java.util.LinkedList;
 public class Indice {
 	
 	private Genero generoRoot;
+	private LinkedList<String> generosIndice;
 	
 	public Indice() {
 		this.generoRoot = null;
+		this.generosIndice = new LinkedList<String>();
 	}
 	
 	public Indice(String genero) {
 		this.generoRoot = new Genero(genero);
+		this.generosIndice = new LinkedList<String>();
 	}	
 	
 	public void insertarLibro(Libro libro) {
@@ -30,6 +33,7 @@ public class Indice {
 		if (generoActual.getGenero().compareTo(genero) < 0) {
 			if (generoActual.getLeft() == null) { 
 				Genero temp = new Genero(genero);
+				addGenerosIndice(genero);
 				temp.addLibro(libro);
 				generoActual.setLeft(temp);
 			} else {
@@ -39,6 +43,7 @@ public class Indice {
 		} else if (generoActual.getGenero().compareTo(genero) > 0) {
 			if (generoActual.getRight() == null) { 
 				Genero temp = new Genero(genero);
+				addGenerosIndice(genero);
 				temp.addLibro(libro);
 				generoActual.setRight(temp);
 			} else {
@@ -98,6 +103,15 @@ public class Indice {
 			}
 		}				
 		return libros;
+	}
+	
+	
+	public void addGenerosIndice(String genero) {
+		this.generosIndice.add(genero);
+	}
+	
+	public LinkedList<String> getGenerosIndice(){
+		return this.generosIndice;
 	}
 
 }
