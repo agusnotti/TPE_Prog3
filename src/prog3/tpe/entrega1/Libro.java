@@ -2,7 +2,7 @@ package prog3.tpe.entrega1;
 
 import java.util.LinkedList;
 
-public class Libro implements LibroInterface {
+public class Libro {
 	
 	private String titulo;
 	private String autor;

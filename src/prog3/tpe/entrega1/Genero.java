@@ -7,7 +7,7 @@ public class Genero {
 	private String genero;
 	private Genero left;
 	private Genero right;
-	private LinkedList<LibroInterface> libros;
+	private LinkedList<Libro> libros;
 
 	public Genero(String genero) {
 		this.genero = genero;
@@ -40,7 +40,7 @@ public class Genero {
 		this.right = right;
 	}
 	
-	public LinkedList<LibroInterface> getLibros() {
+	public LinkedList<Libro> getLibros() {
 		return this.libros;
 	}
 	

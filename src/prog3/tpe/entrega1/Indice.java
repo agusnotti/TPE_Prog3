@@ -64,7 +64,7 @@ public class Indice {
 			System.out.println(" - ");
 		} else {
 			String libros = "";
-			for (LibroInterface libro : genero.getLibros()) {
+			for (Libro libro : genero.getLibros()) {
 				libros += libro.getTitulo()+", ";
 			}
 			System.out.println(genero.getGenero()+" ");
@@ -74,8 +74,8 @@ public class Indice {
 		}
 	}
 	
-	public LinkedList<LibroInterface> getLibrosPorGenero(String genero){
-		LinkedList<LibroInterface> libros = new LinkedList<>();
+	public LinkedList<Libro> getLibrosPorGenero(String genero){
+		LinkedList<Libro> libros = new LinkedList<>();
 		if(!this.isEmpty()) {
 			libros = getLibrosPorGenero(genero, this.generoRoot);
 		}
@@ -83,8 +83,8 @@ public class Indice {
 		return libros;
 	}
 	
-	private LinkedList<LibroInterface> getLibrosPorGenero(String genero, Genero generoActual){
-		LinkedList<LibroInterface> libros = new LinkedList<>();
+	private LinkedList<Libro> getLibrosPorGenero(String genero, Genero generoActual){
+		LinkedList<Libro> libros = new LinkedList<>();
 				
 		if(generoActual.getGenero().equals(genero)) {
 			libros = generoActual.getLibros();
