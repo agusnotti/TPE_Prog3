@@ -14,22 +14,28 @@ public class Main {
 	static BufferedWriter bw = null;
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		String csvFile = "D:\\05-TUDAI\\Progra 3\\datasets\\dataset2.csv";
-//		String csvFile = "C:\\Users\\meagu\\Desktop\\TUDAI\\[PROG 3]\\PROG3 - 2022\\TPE - 2022\\datasets\\dataset1.csv";
+
+		String context = "datasets/";
+		File folder = new File(context);
+		String[] files = folder.list();
 		String genero = "thriller";
-		asLinkedListTest(csvFile, genero);
-		asArrayTest(csvFile, genero);
+		assert files != null;
+		for (String file: files) {
+			String csvFile = context + file;
+			System.out.println("********************");
+			System.out.println("READING FILE: " + file);
+			System.out.println("Total elements: " + readFile(csvFile).size());
+			asArrayTest(csvFile, genero);
+			asLinkedListTest(csvFile, genero);
+		}
 
 	}
 
 	public static void asLinkedListTest(String filePath, String generoBuscado) {
 		LinkedList<Libro> books = readFile(filePath);
 		Indice indice = new Indice();
-		Timer timer = new Timer();
-		System.out.println(" ");
 
+		Timer timer = new Timer();
 		timer.start();
 		for (Libro libro : books) {
 			indice.insertarLibro(libro);
@@ -62,6 +68,7 @@ public class Main {
 	public static void asArrayTest(String filePath, String generoBuscado) {
 		ArrayList<LibroWithArray> books = readFileAsArray(filePath);
 		List<LibroInterface> filteredBooks = new ArrayList<>();
+
 		Timer timer = new Timer();
 		timer.start();
 		for (LibroWithArray book: books) {
@@ -139,9 +146,9 @@ public class Main {
 	}
 
 	public static String convertToCSV(LibroInterface data) {
-		String gens = "";
+		StringBuilder gens = new StringBuilder();
 		for (String gen: data.getGeneros()) {
-			gens += gen + " ";
+			gens.append(gen).append(" ");
 		}
 		return data.getAutor() + "," + data.getTitulo() + "," + data.getCantidadPaginas() + "," + gens;
 	}
