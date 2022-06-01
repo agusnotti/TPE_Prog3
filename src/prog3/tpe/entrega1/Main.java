@@ -7,54 +7,49 @@ import java.util.LinkedList;
 
 public class Main {
 
-	static BufferedWriter bw = null;
-
 	public static void main(String[] args) throws IOException {
-		
 	 
-		System.out.println("LEER ARCHIVO DE DATOS");
+		System.out.println("LEER ARCHIVO DE DATOS\nIngrese solo el nombre (sin \".csv\"");
 		String folder = obtenerPath();
 		
 		String fileName = obtenerFileName();	
 		File pathFile = new File(folder,fileName+".csv");
-		
-		
+
 		//Genera una lista de Libros a partir de la lectura de un archivo
-		LinkedList<Libro> coleccionLibros = readFile(pathFile);		
+		LinkedList<Libro> coleccionLibros = FileHandler.readFile(pathFile);
 		
 		//Genera Indice y lo carga con la coleccion de libros
 		Indice indice = new Indice();		
 		cargarIndice(indice, coleccionLibros);
 		
-		
-		
 		//Obtiene los generos que contiene el indice
-		System.out.println("Lista de Generos que contiene el Indice");
-		System.out.println("");
+		System.out.println("Lista de Generos que contiene el Indice\n");
 		LinkedList<String> generosIndice = indice.getGenerosIndice();		
 		for (String genero : generosIndice) {
-			System.out.println(genero);;
+			System.out.println(genero);
 		}
 		
-		
-		System.out.println("");		
+		System.out.println();
 		//Pide al usuario un Genero para hacer la busqueda de libros por genero
 		String genero = obtenerGenero();
 		
 		
 		//Filtra los libros por el genero ingresado por el usuario		
 		LinkedList<Libro> librosPorGenero = filtrarLibros(indice, genero);
-		
-		System.out.println("");
+
 				
-		System.out.println("GENERAR ARCHIVO DE DATOS");
-		System.out.println("");
+		System.out.println("\nGENERAR ARCHIVO DE DATOS\n");
 		String pathOutputFile = obtenerPath();		 
-		String nameOutputFile = obtenerFileName();		
+		String nameOutputFile = obtenerFileName();
 		File file = new File(pathOutputFile,nameOutputFile+".csv");
+//		String output = pathOutputFile + nameOutputFile + ".csv";
+
+		if (new File(pathOutputFile).mkdirs()) {
+			System.out.println("Generando directorios...");
+		}
 		
 		//Genera el archivo de salida
-		generateCsv(librosPorGenero, file);
+		FileHandler.generateCsv(librosPorGenero, file);
 		
 		
 		/*		
@@ -72,7 +67,7 @@ public class Main {
 		assert files != null;
 		for (String file: files) {
 			File csvFile = new File(context,file);
-			LinkedList<Libro> coleccionLibros = readFile(csvFile);	
+			LinkedList<Libro> coleccionLibros = FileHandler.readFile(csvFile);
 			Indice indice = new Indice();		
 			cargarIndice(indice, coleccionLibros);	
 			filtrarLibros(indice, genero);
@@ -84,7 +79,7 @@ public class Main {
 		System.out.println("Ingrese el genero buscado: ");
 		BufferedReader inputGenre = new BufferedReader(new InputStreamReader(System.in)); 
 		String genre = inputGenre.readLine();		
-		System.out.println("");
+		System.out.println();
 		
 		return genre;
 	}
@@ -126,90 +121,15 @@ public class Main {
 	}
 	
 	
-	private static LinkedList<Libro> filtrarLibros(Indice indice, String genero) throws IOException {			
-			//Filtra los libros por genero
-			Timer timer = new Timer();			
-			timer.start();
-			LinkedList<Libro> librosPorGenero = indice.getLibrosPorGenero(genero);
-			double time = timer.stop();
-			System.out.println("LinkedList iteration time: " + time);
-			
+	private static LinkedList<Libro> filtrarLibros(Indice indice, String genero) {
+		//Filtra los libros por genero
+		Timer timer = new Timer();
+		timer.start();
+		LinkedList<Libro> librosPorGenero = indice.getLibrosPorGenero(genero);
+		double time = timer.stop();
+		System.out.println("LinkedList iteration time: " + time);
 		 
 		 return librosPorGenero;
-	}	
-	
-
-	private static LinkedList<Libro> readFile(File pathFile) throws IOException{
-		
-		System.out.println("************");
-		//System.out.println("READING FILE: " + pathFile.split("/")[1]);
-		System.out.println("READING FILE: " + pathFile.getName());
-		
-		LinkedList<Libro> books = new LinkedList<Libro>();
-		String line = "";
-		String csvSplitBy = ",";
-
-		try (BufferedReader br = new BufferedReader(new FileReader(pathFile))) {
-			//Salta la primer linea que contiene los titulos
-        	br.readLine();
-			while ((line = br.readLine()) != null) {
-				String[] items = line.split(csvSplitBy);
-				Libro book = new Libro(items[0], items[1],items[2]);
-				String[] genres = items[3].split(" ");
-				for (String genre : genres) {
-					book.addGenero(genre);
-				}
-				books.add(book);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Total elements: " + books.size());
-		return books;
-	}	
-	
-
-	private static String convertToCSV(Libro data) {
-		StringBuilder gens = new StringBuilder();
-		for (String gen: data.getGeneros()) {
-			gens.append(gen).append(" ");
-		}
-		return data.getAutor() + "," + data.getTitulo() + "," + data.getCantidadPaginas() + "," + gens;
-	}
-
-		
-	private static void generateCsv(LinkedList<Libro> dataLines, File file) throws IOException {		
-		
-		BufferedWriter bw = null;
-		try {
-			//String outputFile = filePath.getName().replace(".csv", "") + "_output.csv";
-			//File file = new File(filePath);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			FileWriter fw = new FileWriter(file);
-			bw = new BufferedWriter(fw);
-			// Escribo la primer linea del archivo
-			String headers = "Titulo,Autor,Paginas,Generos";
-			bw.write(headers);
-			bw.newLine();
-			
-			for (Libro book: dataLines) {
-				String str = convertToCSV(book);
-				bw.write(str);
-				bw.newLine();
-			}
-			System.out.println("Output file: " + file.getName() +". Se guardo en la siguiente ruta: "+ file.getAbsolutePath());
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} finally {
-			try {
-				if (bw != null)
-					bw.close();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
 	}
 
 }
