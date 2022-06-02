@@ -45,7 +45,7 @@ public class Genero {
 	}
 	
 	public void addLibro(Libro libro) {
-		this.libros.add(libro);
+		this.libros.addLast(libro);
 	}
 	
 	

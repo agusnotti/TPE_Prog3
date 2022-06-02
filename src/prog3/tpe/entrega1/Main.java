@@ -1,5 +1,6 @@
 package prog3.tpe.entrega1;
 
+import org.w3c.dom.Node;
 import prog3.tpe.entrega1.arraystest.LibroWithArray;
 import prog3.tpe.utils.Timer;
 
@@ -25,26 +26,41 @@ public class Main {
 			System.out.println("********************");
 			System.out.println("READING FILE: " + file);
 			System.out.println("Total elements: " + readFile(csvFile).size());
-			asArrayTest(csvFile, genero);
 			asLinkedListTest(csvFile, genero);
+			asArrayTest(csvFile, genero);
 		}
+		Timer t = new Timer();
+		t.start();
+		final Node<String> newNode = new Node<>(null, null, null);
+		double time = t.stop();
+		System.out.println("\n\nLinkedList estimated creation time for each node: " + time);
 
+	}
+
+	private static class Node<E> {
+		E item;
+		Node<E> next;
+		Node<E> prev;
+
+		Node(Node<E> prev, E element, Node<E> next) {
+			this.item = element;
+			this.next = next;
+			this.prev = prev;
+		}
 	}
 
 	public static void asLinkedListTest(String filePath, String generoBuscado) {
 		LinkedList<Libro> books = readFile(filePath);
 		Indice indice = new Indice();
-
+		LinkedList<Libro> booksCopy = new LinkedList<>();
 		Timer timer = new Timer();
 		timer.start();
 		for (Libro libro : books) {
-			indice.insertarLibro(libro);
+//			indice.insertarLibro(libro);
+			booksCopy.add(libro);
 		}
 		double time = timer.stop();
 		System.out.println("LinkedList insertion time: " + time);
-
-		//indice.printPreOrder();
-
 
 		LinkedList<LibroInterface> booksitos = new LinkedList<LibroInterface>();
 		timer.start();
@@ -54,12 +70,8 @@ public class Main {
 
 		Iterator<LibroInterface> iterator = booksitos.iterator();
 
-//		System.out.println("Titulo libros de " + generoBuscado + ": ");
-//		while(iterator.hasNext()) {
-//			System.out.println(iterator.next().getTitulo());
-//		}
 		try {
-			generateCsv(booksitos);
+			generateCsv(booksitos, filePath);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -82,12 +94,12 @@ public class Main {
 		System.out.println("ArrayList iteration time: " + time);
 
 		try {
-			generateCsv(filteredBooks);
+			generateCsv(filteredBooks, filePath);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		ArrayList<LibroWithArray> booksCopy = new ArrayList<>();
+		ArrayList<LibroWithArray> booksCopy = new ArrayList<>(1);
 		timer.start();
 		for (LibroWithArray book: books) {
 			booksCopy.add(book);
@@ -153,12 +165,31 @@ public class Main {
 		return data.getAutor() + "," + data.getTitulo() + "," + data.getCantidadPaginas() + "," + gens;
 	}
 
-	public static void generateCsv(List<LibroInterface> dataLines) throws IOException {
-		File file = new File("output.csv");
-		try (PrintWriter pw = new PrintWriter(file)) {
-			dataLines.stream()
-					.map(Main::convertToCSV)
-					.forEach(pw::println);
+	public static void generateCsv(List<LibroInterface> dataLines, String filePath) throws IOException {
+		BufferedWriter bw = null;
+		try {
+			String outputFile = filePath.split("/")[1].replace(".csv", "") + "_output.csv";
+			File file = new File(outputFile);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileWriter fw = new FileWriter(file);
+			bw = new BufferedWriter(fw);
+			for (LibroInterface book: dataLines) {
+				String str = convertToCSV(book);
+				bw.write(str);
+				bw.newLine();
+			}
+			System.out.println("Output file: " + outputFile);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		} finally {
+			try {
+				if (bw != null)
+					bw.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 
