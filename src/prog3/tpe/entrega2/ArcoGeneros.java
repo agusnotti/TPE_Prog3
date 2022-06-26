@@ -32,4 +32,13 @@ public class ArcoGeneros {
 	public void aumentarCantBusquedas(){
 		this.cantBusquedas++;
 	}
+
+	@Override
+	public String toString() {
+		return "ArcoGeneros{" +
+				"generoOrigen='" + generoOrigen + '\'' +
+				", generoDestino='" + generoDestino + '\'' +
+				", cantBusquedas=" + cantBusquedas +
+				'}';
+	}
 }

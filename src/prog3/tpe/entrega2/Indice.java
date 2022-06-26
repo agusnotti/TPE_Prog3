@@ -1,6 +1,8 @@
 package prog3.tpe.entrega2;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 // IMPLEMENTAR SERVICIOS
@@ -17,7 +19,6 @@ public class Indice {
    private GrafoGeneros buscador;
 
    public Indice() {
-
       this.buscador = new GrafoGeneros();
    }
 
@@ -46,6 +47,39 @@ public class Indice {
       }catch(IOException e){
          e.printStackTrace();
       }
+   }
+
+   /* donde genero es A y cantidad es N (servicio 1) */
+   public ArrayList<String> obtenerMasBuscadosLuegoDe(String genero, int cantidad) {
+      ArrayList<ArcoGeneros> arcos = new ArrayList<>();
+      buscador.obtenerArcos(genero).forEachRemaining(arcos::add);
+      arcos.sort((a, b) -> b.getCantBusquedas() - a.getCantBusquedas());
+      System.out.println(arcos);
+      ArrayList<String> result = new ArrayList<>();
+      for (int i = 0; i < cantidad && i < arcos.size(); i++) {
+         result.add(arcos.get(i).getGeneroDestino());
+      }
+      return result;
+   }
+
+   public ArcoGeneros obtenerArcoMayorValor(String genero) {
+      Iterator<ArcoGeneros> arcos = buscador.obtenerArcos(genero);
+      ArcoGeneros mayorValor = arcos.next();
+      while (arcos.hasNext()) {
+         ArcoGeneros elem = arcos.next();
+         if (elem.getCantBusquedas() > mayorValor.getCantBusquedas()) {
+            mayorValor = elem;
+         }
+      }
+      return mayorValor;
+   }
+
+   public int obtenerValorDeBusqueda(ArrayList<ArcoGeneros> arcos) {
+      int suma = 0;
+      for (ArcoGeneros arco : arcos) {
+         suma += arco.getCantBusquedas();
+      }
+      return suma;
    }
 
    //METODOS PARA TESTEAR
