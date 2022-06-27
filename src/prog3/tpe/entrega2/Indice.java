@@ -2,7 +2,6 @@ package prog3.tpe.entrega2;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 
 // IMPLEMENTAR SERVICIOS
@@ -62,16 +61,59 @@ public class Indice {
       return result;
    }
 
-   public ArcoGeneros obtenerArcoMayorValor(String genero) {
-      Iterator<ArcoGeneros> arcos = buscador.obtenerArcos(genero);
-      ArcoGeneros mayorValor = arcos.next();
-      while (arcos.hasNext()) {
-         ArcoGeneros elem = arcos.next();
-         if (elem.getCantBusquedas() > mayorValor.getCantBusquedas()) {
-            mayorValor = elem;
+   /* A partir de un género A encontrar, en tiempo polinomial, la secuencia de géneros
+      que más alto valor de búsqueda posee. Vamos a definir el valor de búsqueda de
+      una secuencia como la suma de los arcos que la componen.
+   */
+   public ArrayList<String> encontrarSecuenciaMayorValor(String genero) {
+      ArrayList<String> solucion = new ArrayList<>();
+      solucion.add(genero);
+      Iterator<ArcoGeneros> itCandidatos = buscador.obtenerArcos(genero);
+      ArrayList<ArcoGeneros> candidatos = iteratorToArray(itCandidatos);
+
+      while (!candidatos.isEmpty()) {
+         ArcoGeneros arco = obtenerArcoMayorValor(candidatos, solucion);
+         /* De no haber un candidato valido, arco sera null, por lo cual corto el ciclo */
+         if (arco != null) {
+            solucion.add(arco.getGeneroDestino());
+            candidatos = iteratorToArray(buscador.obtenerArcos(arco.getGeneroDestino()));
+         } else {
+            break;
+         }
+      }
+      return solucion;
+   }
+
+   public ArcoGeneros obtenerArcoMayorValor(ArrayList<ArcoGeneros> arcos, ArrayList<String> solucion) {
+      ArcoGeneros mayorValor = null;
+      int size = arcos.size();
+      if (size > 0) {
+         int index = -1;
+         /* selecciono el primer candidato cuyo destino no este en la solucion */
+         for (int i = 0; i < size; i++) {
+            if (!solucion.contains(arcos.get(i).getGeneroDestino())) {
+               mayorValor = arcos.get(i);
+               index = i;
+               break;
+            }
+         }
+         /* si el ultimo elemento con el cual se inicializo mayorValor no es -1 ni es igual a size -1
+          * (es decir, el primer FOR llego al final del arreglo de candidatos), no comparo nuevamente */
+         if (index < size - 1 && index != -1) {
+            for (int i = index; i < size; i++) {
+               if (arcos.get(i).getCantBusquedas() > mayorValor.getCantBusquedas() && !solucion.contains(arcos.get(i).getGeneroDestino())) {
+                  mayorValor = arcos.get(i);
+               }
+            }
          }
       }
       return mayorValor;
+   }
+
+   public ArrayList<ArcoGeneros> iteratorToArray(Iterator<ArcoGeneros> iterator) {
+      ArrayList<ArcoGeneros> result = new ArrayList<>();
+      iterator.forEachRemaining(result::add);
+      return result;
    }
 
    public int obtenerValorDeBusqueda(ArrayList<ArcoGeneros> arcos) {

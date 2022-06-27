@@ -17,7 +17,7 @@ public class Main {
 
         */  
 
-        File pathFile = new File("Datasets2daEtapa/dataset2.csv");
+        File pathFile = new File("Datasets2daEtapa/dataset1.csv");
 
         Indice indice = new Indice();         
 
@@ -39,6 +39,7 @@ public class Main {
         }
 
         System.out.println(indice.obtenerMasBuscadosLuegoDe("periodismo", 5));
+        System.out.println(indice.encontrarSecuenciaMayorValor("periodismo"));
 
     }
 
