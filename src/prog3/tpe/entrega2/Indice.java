@@ -35,11 +35,14 @@ public class Indice {
             String[] generos = line.split(cvsSplitBy);
             for (int i=0;i<generos.length;i++) {
                if(i == generos.length-1){
-                  buscador.agregarGenero(generos[i]);
+                  this.cargarGrafo(generos[i], null);
+                  //this.buscador.agregarGenero(generos[i]);
                } else {
-                  buscador.agregarGenero(generos[i]);
-                  buscador.agregarGenero(generos[i+1]); //Agrego el próximo genero
-                  buscador.agregarArco(generos[i], generos[i+1]);
+                  this.cargarGrafo(generos[i], generos[i+1]);
+
+                  //this.buscador.agregarGenero(generos[i]);
+                  //this.buscador.agregarGenero(generos[i+1]); //Agrego el próximo genero
+                  //this.buscador.agregarArco(generos[i], generos[i+1]);
                }               
             }
          }
@@ -48,12 +51,30 @@ public class Indice {
       }
    }
 
-   /* donde genero es A y cantidad es N (servicio 1) */
-   public ArrayList<String> obtenerMasBuscadosLuegoDe(String genero, int cantidad) {
+   public void cargarGrafo(String genero, String proxGenero){
+      if (proxGenero == null) {
+         cargarGrafo(genero);
+      } else {
+         this.buscador.agregarGenero(genero);
+         this.buscador.agregarGenero(proxGenero);
+         this.buscador.agregarArco(genero, proxGenero);
+      }
+   }
+
+   private void cargarGrafo (String genero){
+      this.buscador.agregarGenero(genero);
+   }
+
+
+
+   /* Obtener los N géneros más buscados luego de buscar por el género A,
+    donde genero es A y cantidad es N  
+    */
+   public ArrayList<String> obtenerNMasBuscadosLuegoDe(String genero, int cantidad) {
       ArrayList<ArcoGeneros> arcos = new ArrayList<>();
       buscador.obtenerArcos(genero).forEachRemaining(arcos::add);
       arcos.sort((a, b) -> b.getCantBusquedas() - a.getCantBusquedas());
-      System.out.println(arcos);
+      //System.out.println(arcos);
       ArrayList<String> result = new ArrayList<>();
       for (int i = 0; i < cantidad && i < arcos.size(); i++) {
          result.add(arcos.get(i).getGeneroDestino());
