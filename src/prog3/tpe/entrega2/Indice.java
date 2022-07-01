@@ -21,6 +21,22 @@ public class Indice {
       this.buscador = new GrafoGeneros();
    }
 
+   public void imprimirGrafo(){
+      this.imprimirGrafo(this.buscador);
+   }
+
+   private void imprimirGrafo(GrafoGeneros grafo) {      
+		Iterator <String> it = grafo.obtenerGeneros();
+		while(it.hasNext()){
+			String vertice = it.next();
+			Iterator <ArcoGeneros> itArco = grafo.obtenerArcos(vertice);
+			while(itArco.hasNext()){
+				ArcoGeneros a = itArco.next();
+				System.out.println(a.getGeneroOrigen()+ " -> " + a.getGeneroDestino()+ "[label = "+ a.getCantBusquedas()+ "];"); 
+			}
+		}		
+	}
+
    //Metodo encargado de cargar las busquedas a partir de los datasets
    public void cargarBusquedas(File pathFile) {
       System.out.println("************");
@@ -35,10 +51,10 @@ public class Indice {
             String[] generos = line.split(cvsSplitBy);
             for (int i=0;i<generos.length;i++) {
                if(i == generos.length-1){
-                  this.cargarGrafo(generos[i], null);
+                  this.cargarGrafo( this.buscador, generos[i], null);
                   //this.buscador.agregarGenero(generos[i]);
                } else {
-                  this.cargarGrafo(generos[i], generos[i+1]);
+                  this.cargarGrafo(this.buscador,generos[i], generos[i+1]);
 
                   //this.buscador.agregarGenero(generos[i]);
                   //this.buscador.agregarGenero(generos[i+1]); //Agrego el próximo genero
@@ -51,21 +67,19 @@ public class Indice {
       }
    }
 
-   public void cargarGrafo(String genero, String proxGenero){
+   public void cargarGrafo(GrafoGeneros grafo, String genero, String proxGenero){
       if (proxGenero == null) {
-         cargarGrafo(genero);
+         cargarGrafo(grafo,genero);
       } else {
-         this.buscador.agregarGenero(genero);
-         this.buscador.agregarGenero(proxGenero);
-         this.buscador.agregarArco(genero, proxGenero);
+         grafo.agregarGenero(genero);
+         grafo.agregarGenero(proxGenero);
+         grafo.agregarArco(genero, proxGenero);
       }
    }
 
-   private void cargarGrafo (String genero){
-      this.buscador.agregarGenero(genero);
+   private void cargarGrafo (GrafoGeneros grafo, String genero){
+      grafo.agregarGenero(genero);
    }
-
-
 
    /* Obtener los N géneros más buscados luego de buscar por el género A,
     donde genero es A y cantidad es N  
@@ -144,6 +158,27 @@ public class Indice {
       }
       return suma;
    }
+
+   /*
+    * Obtener el grafo únicamente con los géneros afines a un género A; es decir que, partiendo del género A, 
+      se consiguió una vinculación cerrada entre uno o más géneros que permitió volver al género de inicio.
+    */
+
+   public GrafoGeneros obtenerGenerosAfines(String genero){
+      GrafoGeneros grafoAfines = new GrafoGeneros();
+      ArrayList<ArrayList<String>> afines = this.buscador.encontrarAfines(genero);
+
+      for (ArrayList<String> generos : afines) {
+         for (int i=0;i<generos.size()-1;i++) {
+            this.cargarGrafo(grafoAfines,generos.get(i), generos.get(i+1));
+         }
+      }
+
+      this.imprimirGrafo(grafoAfines);
+      return grafoAfines;
+   }
+   
+
 
    //METODOS PARA TESTEAR
    public Iterator<String> obtenerGeneros(){
