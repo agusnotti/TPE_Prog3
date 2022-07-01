@@ -1,5 +1,7 @@
 package prog3.tpe.entrega2;
 
+import prog3.tpe.utils.Timer;
+
 import java.io.*;
 import java.util.Iterator;
 
@@ -7,48 +9,58 @@ public class Main {
     
 	public static void main(String[] args) throws IOException {
 
-        /* DESCOMENTAR AL ENTREGAR
-
-         System.out.println("LEER ARCHIVO DE DATOS\nIngrese solo el nombre (sin \".csv\"");
+        System.out.println("LEER ARCHIVO DE DATOS\nIngrese solo el nombre (sin \".csv\"");
 		String folder = obtenerPath();
-		
-		String fileName = obtenerFileName();	
+
+		String fileName = obtenerFileName();
 		File pathFile = new File(folder,fileName+".csv");
-
-        */  
-
-        File pathFile = new File("C:\\Users\\meagu\\Desktop\\TUDAI\\[PROG 3]\\PROG3 - 2022\\TPE - 2022\\datasets - 2P\\dataset.csv");
 
         Indice indice = new Indice();         
 
         indice.cargarBusquedas(pathFile);
 
-        //System.out.println("GENEROS\n");
-        Iterator<String> itGeneros = indice.obtenerGeneros();
-        while(itGeneros.hasNext()){
-            String genero = itGeneros.next();
-            //System.out.println("GENERO: " + genero);
-            Iterator<ArcoGeneros> itArcos = indice.obtenerArcos(genero);
-            while(itArcos.hasNext()){
-                ArcoGeneros arco = itArcos.next();
-                System.out.println("GENERO ORIGEN: " + arco.getGeneroOrigen()
-                + "\nGENERO DESTINO: " + arco.getGeneroDestino()
-                + "\nCANTIDAD BUSQUEDAS: "+ String.valueOf(arco.getCantBusquedas())+"\n");
-                //System.out.println(arco.getGeneroOrigen() + " -> " + arco.getGeneroDestino() + "[label = " + arco.getCantBusquedas() + "];"); // para usar la herramienta de grafos
-            }
-        }
+        String gen = obtenerGenero();
+        int n = obtenerN();
 
-        System.out.println("Mas buscado luego de: "+indice.obtenerNMasBuscadosLuegoDe("viajes", 5));
-        System.out.println("Secuencia mayor valor: "+indice.encontrarSecuenciaMayorValor("periodismo"));
-
-        //indice.imprimirGrafo();
-        System.out.println("");
-        System.out.println("Hola");
-        indice.obtenerGenerosAfines("informatica");
+        System.out.println("Mas buscado luego de: "+indice.obtenerNMasBuscadosLuegoDe(gen, n));
+        System.out.println("Secuencia mayor valor: "+indice.encontrarSecuenciaMayorValor(gen));
+        System.out.println("Grafo generos afines: ");
+        GrafoGeneros g = indice.obtenerGenerosAfines(gen);
+        printGraph(g);
 
     }
 
+
 ////METODOS AUXILIARES
+
+    public static void printGraph(GrafoGeneros grafo) {
+        Indice indice = new Indice(grafo);
+        Iterator<String> itGeneros = indice.obtenerGeneros();
+        while(itGeneros.hasNext()){
+            String genero = itGeneros.next();
+            Iterator<ArcoGeneros> itArcos = indice.obtenerArcos(genero);
+            while(itArcos.hasNext()){
+                ArcoGeneros arco = itArcos.next();
+                System.out.println(arco.getGeneroOrigen() + " -> " + arco.getGeneroDestino() + "[label = " + arco.getCantBusquedas() + "];"); // para usar la herramienta de grafos
+            }
+        }
+    }
+
+    private static int obtenerN() throws IOException {
+        System.out.println("Ingrese N: ");
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        return Integer.parseInt(input.readLine());
+    }
+
+    private static String obtenerGenero() throws IOException {
+        System.out.println("Ingrese el genero buscado: ");
+        BufferedReader inputGenre = new BufferedReader(new InputStreamReader(System.in));
+        String genre = inputGenre.readLine();
+        System.out.println();
+
+        return genre;
+    }
+
     private static String obtenerPath() throws IOException {
         System.out.println("Ingrese ruta de la carpeta: ");
         BufferedReader inputPathFolder = new BufferedReader(new InputStreamReader(System.in)); 

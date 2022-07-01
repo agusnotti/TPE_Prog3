@@ -122,39 +122,6 @@ public class GrafoGeneros {
 		}	
 		return existeArco;
 	}
-	
-
-	public void borrarGenero(String genero) {
-		if(this.contieneGenero(genero)){
-			this.borrarArcoGenerosAdyacentes(genero);
-			this.generos.remove(genero);
-		}
-	}	
-
-
-	//Eliminar los ArcoGeneross que tengan como destino el vertice que viene de parametro
-	public void borrarArcoGenerosAdyacentes(String genero){
-		//obtengo iterador de todos los Arcos del grafo
-		Iterator<ArcoGeneros> itArcos = this.obtenerArcos();
-
-		while (itArcos.hasNext()) {
-			ArcoGeneros arcoGeneros = itArcos.next();
-			//si el vertice Destino del ArcoGeneros actual es igual al vertice que viene de parametro
-			if (arcoGeneros.getGeneroDestino().equals(genero)) {
-				this.borrarArco(arcoGeneros.getGeneroOrigen(), arcoGeneros.getGeneroDestino());
-			}
-		}
-	}
-
-	
-	public void borrarArco(String generoOrigen, String generoDestino) {
-		if (this.existeArco(generoOrigen, generoDestino)) {
-			ArcoGeneros arcoGeneros = this.obtenerArco(generoOrigen, generoDestino);
-			this.generos.get(generoOrigen).remove(arcoGeneros);
-			//cantidadArcos--;
-		}
-	}
-
 
 	public Iterator<String> obtenerAdyacentes(String genero) {
 		Iterator<ArcoGeneros> arcoGeneros = this.obtenerArcos(genero);

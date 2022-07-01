@@ -21,6 +21,10 @@ public class Indice {
       this.buscador = new GrafoGeneros();
    }
 
+   public Indice(GrafoGeneros buscador) {
+      this.buscador = buscador;
+   }
+
    public void imprimirGrafo(){
       this.imprimirGrafo(this.buscador);
    }
@@ -174,7 +178,6 @@ public class Indice {
          }
       }
 
-      this.imprimirGrafo(grafoAfines);
       return grafoAfines;
    }
    
