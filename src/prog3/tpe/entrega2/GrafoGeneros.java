@@ -1,5 +1,7 @@
 package prog3.tpe.entrega2;
 
+import java.util.ArrayList;
+
 /*
  * La clase Grafo almacena los generos buscados. 
  * Cada Vertice representa un género que fue incluído en alguna búsqueda y cada uno de los vertices tiene un 
@@ -15,11 +17,13 @@ public class GrafoGeneros {
     ////VARIABLES
     //HashMap: Clave: genero (String), Valor: lista de arcos destino a otros generos adyacentes (LinkedList<ArcosGenero>)
 	private HashMap<String, LinkedList<ArcoGeneros>> generos;
+	private HashMap<String, String> visitados;
 	//private int cantidadArcos;
 	
 	//// CONSTRUCTOR
 	public GrafoGeneros() {
 		this.generos = new HashMap<String, LinkedList<ArcoGeneros>>();
+		this.visitados = new HashMap<String, String>();
 		//this.cantidadArcos = 0;
 	}
 
@@ -106,12 +110,6 @@ public class GrafoGeneros {
 		return this.generos.size();
 	}
 
-	/*
-	 public int cantidadArcos() {
-		return this.cantidadArcos;	
-	}
-	 */
-
 	public boolean existeArco(String genero1, String genero2) {
 		boolean existeArco = false;
 		if(contieneGenero(genero1)) { 
@@ -166,4 +164,50 @@ public class GrafoGeneros {
 		}
 		return adyacentes.iterator();
 	}
+
+	public ArrayList<ArrayList<String>> encontrarAfines(String generoBuscado){		
+		marcarNoVisitados();
+		ArrayList <ArrayList<String>> ciclos = new ArrayList <>();		
+		ciclos.addAll(encontrarCiclos(generoBuscado,generoBuscado));
+
+		return ciclos;
+	}
+	
+	private ArrayList<ArrayList<String>> encontrarCiclos(String generoOrigen , String genero) {
+		
+		ArrayList<ArrayList<String>> ciclos = new ArrayList <>();			
+		this.visitados.put(genero, "amarillo");		
+		Iterator<String> itAdyacentes = this.obtenerAdyacentes(genero);	
+
+		while (itAdyacentes.hasNext()){
+			String adyacente = itAdyacentes.next();
+			if (this.visitados.get(adyacente).equals("blanco")){
+				ArrayList<ArrayList<String>> ciclosParciales = new ArrayList<ArrayList<String>>();
+				ciclosParciales = encontrarCiclos(generoOrigen, adyacente);	
+
+				for(ArrayList<String> subCiclo: ciclosParciales){
+					subCiclo.add(0,genero);
+					ciclos.add(subCiclo);
+				}	
+
+			} else if(generoOrigen.equals(adyacente) && this.visitados.get(adyacente).equals("amarillo")){
+				ArrayList<String> ciclo = new ArrayList <>();
+				ciclo.add(genero);
+				ciclo.add(adyacente);
+				ciclos.add(ciclo);
+			}
+		}
+		this.visitados.put(genero, "blanco"); //para buscar otras soluciones
+		
+		return ciclos;
+	}
+
+	public void marcarNoVisitados(){
+		Iterator<String> itVertices = this.obtenerGeneros();
+		while (itVertices.hasNext()) {
+			String vertice = itVertices.next();
+			this.visitados.put(vertice, "blanco");
+		}
+	}
+
 }

@@ -17,33 +17,38 @@ public class Main {
 
         */  
 
-        File pathFile = new File("Datasets2daEtapa/dataset1.csv");
+        File pathFile = new File("C:\\Users\\meagu\\Desktop\\TUDAI\\[PROG 3]\\PROG3 - 2022\\TPE - 2022\\datasets - 2P\\dataset.csv");
 
         Indice indice = new Indice();         
 
         indice.cargarBusquedas(pathFile);
 
-        System.out.println("GENEROS\n");
+        //System.out.println("GENEROS\n");
         Iterator<String> itGeneros = indice.obtenerGeneros();
         while(itGeneros.hasNext()){
             String genero = itGeneros.next();
-//            System.out.println("GENERO: " + genero);
+            //System.out.println("GENERO: " + genero);
             Iterator<ArcoGeneros> itArcos = indice.obtenerArcos(genero);
             while(itArcos.hasNext()){
                 ArcoGeneros arco = itArcos.next();
                 System.out.println("GENERO ORIGEN: " + arco.getGeneroOrigen()
                 + "\nGENERO DESTINO: " + arco.getGeneroDestino()
                 + "\nCANTIDAD BUSQUEDAS: "+ String.valueOf(arco.getCantBusquedas())+"\n");
-//                System.out.println(arco.getGeneroOrigen() + " -> " + arco.getGeneroDestino() + "[label = " + arco.getCantBusquedas() + "];"); // para usar la herramienta de grafos
+                //System.out.println(arco.getGeneroOrigen() + " -> " + arco.getGeneroDestino() + "[label = " + arco.getCantBusquedas() + "];"); // para usar la herramienta de grafos
             }
         }
 
-        System.out.println(indice.obtenerMasBuscadosLuegoDe("periodismo", 5));
-        System.out.println(indice.encontrarSecuenciaMayorValor("periodismo"));
+        System.out.println("Mas buscado luego de: "+indice.obtenerNMasBuscadosLuegoDe("viajes", 5));
+        System.out.println("Secuencia mayor valor: "+indice.encontrarSecuenciaMayorValor("periodismo"));
+
+        //indice.imprimirGrafo();
+        System.out.println("");
+        System.out.println("Hola");
+        indice.obtenerGenerosAfines("informatica");
 
     }
 
-
+////METODOS AUXILIARES
     private static String obtenerPath() throws IOException {
         System.out.println("Ingrese ruta de la carpeta: ");
         BufferedReader inputPathFolder = new BufferedReader(new InputStreamReader(System.in)); 
@@ -62,6 +67,10 @@ public class Main {
         
         return fileName;
     }
+
+
+
+    
 }
 
 
